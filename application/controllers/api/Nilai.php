@@ -7,7 +7,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
 
-class Pelatih extends REST_Controller
+class Nilai extends REST_Controller
 {
 
     public function __construct()
@@ -19,18 +19,31 @@ class Pelatih extends REST_Controller
     public function index_post()
     {
         $id = $this->post('id_user');
-        $data = $this->db->query("SELECT * FROM  user JOIN tim JOIN lapangan JOIN pelatih JOIN jadwal WHERE user.id_user = $id AND pelatih.id_user=user.id_user")->result_array();
-        if ($data) {
+        $data = $this->db->query("SELECT * FROM  tb_nilai WHERE id_user = '$id'")->result_array();
+        foreach ($data as $dt) {
+            $dat = ($dt['laporan'] + $dt['video'] + $dt['blog'] + $dt['aplikasi']) / 4;
             $this->response([
                 'status' => true,
                 'messages' => "Data Anda",
-                'data' => $data,
+                'data' => $dat,
+            ], REST_Controller::HTTP_OK);
+        }
+    }
+
+    public function index_get()
+    {
+        $get = $this->db->get('tb_nilai')->result_array();
+        if ($get) {
+            $this->response([
+                'status' => true,
+                'messages' => "data Anda",
+                'data' => $get,
             ], REST_Controller::HTTP_OK);
         } else {
             $this->response([
                 'status' => true,
-                'messages' => "Data Not Found",
-                'data' => $data,
+                'messages' => "data Not Found",
+                'data' => $get,
             ], REST_Controller::HTTP_NOT_FOUND);
         }
     }
